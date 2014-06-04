@@ -8,5 +8,10 @@ if [ ! -f WindowsXP-KB968930-x86-ENG.exe ]
 then
 	curl -o WindowsXP-KB968930-x86-ENG.exe http://download.microsoft.com/download/E/C/E/ECE99583-2003-455D-B681-68DB610B44A4/WindowsXP-KB968930-x86-ENG.exe
 fi
+
+if [ ! -f WindowsServer2003-KB968930-x86-ENG.exe ]
+then
+        curl -o WindowsServer2003-KB968930-x86-ENG.exe http://download.microsoft.com/download/1/1/7/117FB25C-BB2D-41E1-B01E-0FEB0BC72C30/WindowsServer2003-KB968930-x86-ENG.exe
+fi
 popd
 mkisofs -o xp-support.iso -J xp-support

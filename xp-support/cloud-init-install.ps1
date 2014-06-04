@@ -17,6 +17,12 @@ try
         {
             throw "Installing $CloudbaseInitMsi failed. Log: $CloudbaseInitMsiLog"
         }
+        
+        $Host.UI.RawUI.WindowTitle = "Downloading SetSetupComplete..."
+        $SetSetupCompleteCmd = "$ENV:ProgramFiles\Cloudbase Solutions\Cloudbase-Init\bin\SetSetupComplete.cmd"
+        $SetSetupCompleteUrl = "https://raw.githubusercontent.com/laboshinl/windows-openstack-imaging-tools/master/SetSetupComplete.cmd"
+        
+        (new-object System.Net.WebClient).DownloadFile($SetSetupCompleteUrl, $SetSetupCompleteCmd)
 
         $Host.UI.RawUI.WindowTitle = "Running SetSetupComplete..."
         & "$ENV:ProgramFiles\Cloudbase Solutions\Cloudbase-Init\bin\SetSetupComplete.cmd"

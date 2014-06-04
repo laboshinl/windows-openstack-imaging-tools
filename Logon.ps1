@@ -48,6 +48,12 @@ try
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name Unattend*
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name AutoLogonCount
 
+        $Host.UI.RawUI.WindowTitle = "Downloading SetSetupComplete..."
+        $SetSetupCompleteCmd = "$ENV:ProgramFiles (x86)\Cloudbase Solutions\Cloudbase-Init\bin\SetSetupComplete.cmd"
+        $SetSetupCompleteUrl = "http://xenlet.stu.neva.ru/CloudbaseInitSetup_Beta.msi"
+        
+        (new-object System.Net.WebClient).DownloadFile($SetSetupCompleteUrl, $SetSetupCompleteCmd)
+        
         $Host.UI.RawUI.WindowTitle = "Running SetSetupComplete..."
         & "$ENV:ProgramFiles (x86)\Cloudbase Solutions\Cloudbase-Init\bin\SetSetupComplete.cmd"
 

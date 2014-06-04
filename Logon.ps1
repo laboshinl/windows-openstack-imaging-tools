@@ -50,7 +50,7 @@ try
 
         $Host.UI.RawUI.WindowTitle = "Downloading SetSetupComplete..."
         $SetSetupCompleteCmd = "$ENV:ProgramFiles (x86)\Cloudbase Solutions\Cloudbase-Init\bin\SetSetupComplete.cmd"
-        $SetSetupCompleteUrl = "http://xenlet.stu.neva.ru/CloudbaseInitSetup_Beta.msi"
+        $SetSetupCompleteUrl = "https://raw.githubusercontent.com/laboshinl/windows-openstack-imaging-tools/master/SetSetupComplete.cmd"
         
         (new-object System.Net.WebClient).DownloadFile($SetSetupCompleteUrl, $SetSetupCompleteCmd)
         

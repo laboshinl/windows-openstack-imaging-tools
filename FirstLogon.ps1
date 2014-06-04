@@ -29,7 +29,7 @@ $logonScriptPath = "$ENV:SystemRoot\Temp\Logon.ps1"
 try
 {
     $Host.UI.RawUI.WindowTitle = "Downloading Logon script..."
-    $baseUrl = "https://raw.github.com/cloudbase/windows-openstack-imaging-tools/master"
+    $baseUrl = "https://raw.githubusercontent.com/laboshinl/windows-openstack-imaging-tools/master"
     (new-object System.Net.WebClient).DownloadFile("$baseUrl/Logon.ps1", $logonScriptPath)
 
     $virtPlatform = (gwmi Win32_ComputerSystem).Model
@@ -49,7 +49,7 @@ try
         {
             $Host.UI.RawUI.WindowTitle = "Downloading VirtIO drivers script..."
             $virtioScriptPath = "$ENV:Temp\InstallVirtIODrivers.js"
-            $url = "https://raw.github.com/cloudbase/windows-openstack-imaging-tools/master/InstallVirtIODrivers.js"
+            $url = "https://raw.githubusercontent.com/laboshinl/windows-openstack-imaging-tools/master/InstallVirtIODrivers.js"
             (new-object System.Net.WebClient).DownloadFile($url, $virtioScriptPath)
             
             $virtioDriversPath = getVirtioDriversFolder

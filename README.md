@@ -1,130 +1,105 @@
-windows-openstack-imaging-tools
-===============================
+h1. Создание образов операционных систем Windows
 
-Tools to automate the creation of a Windows image for OpenStack, supporting KVM, Hyper-V, ESXi and more.
+Данные скрипты предназначены для создания образов виртуальных машин семейства Windows, которые могут быть использованы для запуска виртуальных машин в облачной инфраструктуре Openstack.
+Скрипты производят установку драйверов (VirtIO https://alt.fedoraproject.org/pub/alt/virtio-win/latest/images/bin/) и программных компонент cloud-init, включающих получение генерацию пользователя при первом запуске, автоматическое расширение файловой системы и т.д. разработанные http://www.cloudbase.it/
 
-Supports any version of Windows starting with Windows 2008 and Windows Vista.
+Инструкции приведены для операционной системы CentOS 6.5
 
-Note: the provided Autounattend.xml targets x64 versions, but it can be easily adapted to x86.
+Добавить репозиторий rpmforge (Нужен для свежего xmlstarlet)
+<pre>
+yum localinstall -y http://apt.sw.be/redhat/el6/en/x86_64/rpmforge/RPMS/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
+</pre>
 
+Установить необходимые зависимости
 
+<pre>
+yum install -y qemu-kvm git xmlstarlet dosfstools mkisofs
+</pre>
 
-### How to create a Windows template image on KVM
+Создать локальную копию репозитория со скриптами автоматизаци создания образов windows
 
+<pre>
+git clone https://github.com/laboshinl/windows-openstack-imaging-tools.git && cd windows-openstack-imaging-tools/
+</pre>
 
-Download the VirtIO tools ISO, e.g. from:
-http://alt.fedoraproject.org/pub/alt/virtio-win/latest/images/bin/
+Скачать необходимый установочный ISO (в примере windows 7 x86)
 
-You'll need also your Windows installation ISO. In the following example we'll use a Windows Server 2012 R2 
-evaluation.
+<pre>
+curl -O http://msft.digitalrivercontent.net/win/X17-24280.iso
+</pre>
 
-    IMAGE=windows-server-2012-r2.qcow2
-    FLOPPY=Autounattend.vfd
-    VIRTIO_ISO=virtio-win-0.1-52.iso
-    ISO=9600.16384.WINBLUE_RTM.130821-1623_X64FRE_SERVER_EVAL_EN-US-IRM_SSS_X64FREE_EN-US_DV5.ISO
+Скачать виртио ISO
 
-    KVM=/usr/libexec/qemu-kvm
-    if [ ! -f "$KVM" ]; then
-        KVM=/usr/bin/kvm
-    fi
+<pre>
+./download-virtio.sh
+</pre> 
 
-    qemu-img create -f qcow2 -o preallocation=metadata $IMAGE 16G
+h2. 
+Windows 7,8,2008,2012
 
-    $KVM -m 2048 -smp 2 -cdrom $ISO -drive file=$VIRTIO_ISO,index=3,media=cdrom -fda $FLOPPY $IMAGE -boot d -vga std -k en-us -vnc :1
+Сгерерировать нужный скрипт автоматизации
+<pre>
+./customize.sh -e 7 -f "Windows 7 ENTERPRISE" -p 32
+</pre>
 
-Now you can just wait for the KVM command to exit. You can also connect to the VM via VNC on port 5901 to check 
-the status, no user interaction is required.
+Возможные варианты флагов:
+<pre>
+-e 'vista' '7' '8' '2008' '2012'
+-f 'Windows 7 ENTERPRISE' 'Windows 7 ENTERPRISEN' 'Windows 8 ENTERPRISE' 'Windows 8 PROFESSIONAL' 
+   'Windows 8.1 ENTERPRISE' 'Windows 8.1 PROFESSIONAL' 'Windows Server 2008 R2 SERVERHYPERCORE' 
+   'Windows Server 2008 R2 SERVERSTANDARD' 'Hyper-V Server 2012 SERVERHYPERCORE' 
+   'Windows Server 2012 SERVERSTANDARD' 'Hyper-V Server 2012 R2 SERVERHYPERCORE' 
+   'Windows Server 2012 R2 SERVERSTANDARD'
+-p '32' '64'
+</pre> 
+Создать загрузочную дискету
+<pre>
+./create-autounattend-floppy.sh
+</pre> 
 
-Note: if you plan to connect remotely via VNC, make sure that the KVM host firewall allows traffic
-on this port, e.g.:
+Запустить установку 
+<pre>
+./create.sh X17-24280.iso
+</pre>
 
-    iptables -I INPUT -p tcp --dport 5901 -j ACCEPT
+h2. 
+Windows xp, Server 2003
 
+Прописать серийный номер операционной системы в файлах Winnt.sif и xp-support/sysprep.inf:
 
-### How to create a Windows template image on Hyper-V
-
-The following Powershell snippet works on both Windows Server and Hyper-V Server 2012 and above:
-
-    $vmname = "OpenStack WS 2012 R2 Standard Evaluation"
-    
-    # Set the extension to VHD instead of VHDX only if you plan to deploy
-    # this image on Grizzly or on Windows / Hyper-V Server 2008 R2
-    $vhdpath = "C:\VM\windows-server-2012-r2.vhdx"
-
-    $isoPath = "C:\your\path\9600.16384.WINBLUE_RTM.130821-1623_X64FRE_SERVER_EVAL_EN-US-IRM_SSS_X64FREE_EN-US_DV5.ISO"
-    $floppyPath = "C:\your\path\Autounattend.vfd"
-
-    # Set the vswitch accordingly with your configuration
-    $vmSwitch = "external"
-
-    New-VHD $vhdpath -Dynamic -SizeBytes (16 * 1024 * 1024 * 1024)
-    $vm = New-VM $vmname -MemoryStartupBytes (2048 * 1024 *1024)
-    $vm | Set-VM -ProcessorCount 2
-    $vm.NetworkAdapters | Connect-VMNetworkAdapter -SwitchName $vmSwitch
-    $vm | Add-VMHardDiskDrive -ControllerType IDE -Path $vhdpath
-    $vm | Add-VMDvdDrive -Path $isopath
-    $vm | Set-VMFloppyDiskDrive -Path $floppyPath
-
-    $vm | Start-Vm
-
-Now you can simply wait for the VM to get installed and configured. It will automatically shutdown once done.
-You can check the status with: 
-
-    get-VM $vmname
-
-If you have Cloudbase Hyper-V Nova Compute installed, you can also connect to the VM console with:
-
-    $vm | Get-VMConsole
+> [UserData]
+> ProductKey=XXXXX-XXXXX-XXXXX-XXXXX-XXXXX
+> FullName="YOUR NAME"
+> OrgName="YOUR ORG"
+> ComputerName=*
 
 
-#### How to set the proper Windows version
+Создать iso с необходимыми обновлениями (KB968930, NetFx20SP1)
 
-The Windows version and edition to be installed can be specified in the Autounattend.xml file contained 
-in the Autounattend.flp floppy image. The default is Windows Server 2012 R2 Standard edition. 
+<pre>
+./create-xp-support-iso.sh 
+</pre> 
+ 
+Создать загрузочную дискету (флаг x означает поддержку XP)
+<pre>
+./create-autounattend-floppy.sh -x
+</pre> 
 
-This can be easily changed here:
-
-https://github.com/cloudbase/windows-openstack-imaging-tools/blob/05b03fa64dc3d8e5c2c5af97c94aecea61616365/Autounattend.xml#L58
-
-For Windows 8 and above, uncomment the following two options:
-
-    <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
-    <HideLocalAccountScreen>true</HideLocalAccountScreen>
-
-On a client OS (Windows 7, 8, etc.) you need also to uncomment the following section:
-
-    <LocalAccounts>
-        <LocalAccount wcm:action="add">
-        ...
-        </LocalAccount>
-    </LocalAccounts>
-
-For x86 builds, replace all occurrences of:
-
-    processorArchitecture="amd64"
-
-with:
-
-    processorArchitecture="x86"
-
-Once done, the floppy image can be easily generated on Linux with:
-
-    ./create-autounattend-floppy.sh
+Запустить установку 
+<pre>
+./create-xp.sh XP.iso
+</pre>
 
 
-----------------------------------------------
-Windows XP instructions:
-edit Winnt.sif and xp-support/sysprep.inf and enter your product key
-run:
-  sudo ./create-autounattend-floppy.sh -x
-  ./create-xp-support-iso.sh
-  ./download-virtio.sh
-  ./create-xp.sh windows-xp-sp3-filename.iso
-In a new window run:
-  vncviewer :1
-When prompted:
- * Select unpartitioned space.
- * Select Format the partition using the NTFS file system (Quick)
- * Whenever you see the dialog "Hardware Installation" Press "Continue Anyway"
-Once the vm shuts down, you should be able to upload the image directly to OpenStack.
+Подключиться к консоли виртуальной машины, где происходит установка операционной системы
+<pre>
+vncviewer [IP]:1
+</pre>
+
+Во время установки система будет несуолько раз перезагружена.
+После завершения установки, виртуальная машина будет выключена, в папке появится образ [Имя установочного образа].qcow2
+
+<pre>
+glance image-create --is-public --progress --name Fuckin'win7-i386 --container-format bare --disk-format qcow2 --human-readable < X17-24280.iso.qcow2
+</pre>
 

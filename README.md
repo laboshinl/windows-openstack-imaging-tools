@@ -1,4 +1,4 @@
-h1. Создание образов операционных систем Windows
+# Создание образов операционных систем Windows
 
 Данные скрипты предназначены для создания образов виртуальных машин семейства Windows, которые могут быть использованы для запуска виртуальных машин в облачной инфраструктуре Openstack.
 Скрипты производят установку драйверов (VirtIO https://alt.fedoraproject.org/pub/alt/virtio-win/latest/images/bin/) и программных компонент cloud-init, включающих получение генерацию пользователя при первом запуске, автоматическое расширение файловой системы и т.д. разработанные http://www.cloudbase.it/
@@ -34,9 +34,9 @@ curl -O http://msft.digitalrivercontent.net/win/X17-24280.iso
 ./download-virtio.sh
 </pre> 
 
-h2. 
-Windows 7,8,2008,2012
-
+ 
+## Windows 7,8,2008,2012
+ 
 Сгерерировать нужный скрипт автоматизации
 <pre>
 ./customize.sh -e 7 -f "Windows 7 ENTERPRISE" -p 32
@@ -62,8 +62,7 @@ Windows 7,8,2008,2012
 ./create.sh X17-24280.iso
 </pre>
 
-h2. 
-Windows xp, Server 2003
+## Windows xp, Server 2003
 
 Прописать серийный номер операционной системы в файлах Winnt.sif и xp-support/sysprep.inf:
 

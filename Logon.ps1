@@ -41,7 +41,7 @@ try
     & $SetSetupCompleteCmd
 
     $Host.UI.RawUI.WindowTitle = "Running Sysprep..."
-    & "$ENV:SystemRoot\System32\Sysprep\Sysprep.exe" `/generalize `/oobe `/shutdown `/unattend:"$unattendedXmlPath"
+    & "$ENV:SystemRoot\System32\Sysprep\Sysprep.exe" `/generalize `/oobe `/unattend:"$unattendedXmlPath"
 }
 catch
 {

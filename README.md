@@ -75,7 +75,7 @@ curl -O http://msft.digitalrivercontent.net/win/X17-24280.iso
 ./create.sh X17-24280.iso
 </pre>
 
-## Windows xp, Server 2003
+## Windows xp (x86)
 
 Прописать серийный номер операционной системы в файлах Winnt.sif и xp-support/sysprep.inf:
 
@@ -84,6 +84,15 @@ curl -O http://msft.digitalrivercontent.net/win/X17-24280.iso
 > FullName="YOUR NAME"
 > OrgName="YOUR ORG"
 > ComputerName=*
+
+### Для Windows 2003 Server (x86) 
+
+Заменить в файле xp-support/first.cmd 
+строчку
+> start /wait WindowsXP-KB968930-x86-ENG.exe /passive
+
+на 
+> start /wait WindowsServer2003-KB968930-x86-ENG.exe /passive
 
 
 Создать iso с необходимыми обновлениями (KB968930, NetFx20SP1)

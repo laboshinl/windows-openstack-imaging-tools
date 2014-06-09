@@ -77,17 +77,13 @@ curl -O http://msft.digitalrivercontent.net/win/X17-24280.iso
 
 ## Windows xp (x86)
 
-Прописать серийный номер операционной системы в файлах Winnt.sif и xp-support/sysprep.inf:
+Вписать корректный серийный номер операционной системы в файлы Winnt.sif и xp-support/sysprep.inf:
 
-> [UserData]
 > ProductKey=XXXXX-XXXXX-XXXXX-XXXXX-XXXXX
-> FullName="YOUR NAME"
-> OrgName="YOUR ORG"
-> ComputerName=*
 
 ### Для Windows 2003 Server (x86) 
 
-Заменить в файле xp-support/first.cmd 
+Так же заменить в файле xp-support/first.cmd 
 строчку
 > start /wait WindowsXP-KB968930-x86-ENG.exe /passive
 

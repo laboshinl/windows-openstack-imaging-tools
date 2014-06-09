@@ -103,3 +103,15 @@ vncviewer [IP]:1
 glance image-create --is-public True --progress --name win7-i386 --container-format bare --disk-format qcow2 --human-readable < X17-24280.iso.qcow2
 </pre>
 
+### Какой пароль у моей ВМ?
+
+<pre>
+[laboshinl@laboshinl ~]$ nova list
++--------------------------------------+------+--------+------------+-------------+---------------------------+
+| ID                                   | Name | Status | Task State | Power State | Networks                  |
++--------------------------------------+------+--------+------------+-------------+---------------------------+
+| b26a6faf-e5d4-4a5e-824a-9d7266970bff | win8 | ACTIVE | -          | Running     | laboshinl-net=203.0.113.4 |
++--------------------------------------+------+--------+------------+-------------+---------------------------+
+[laboshinl@laboshinl ~]$ nova get-password b26a6faf-e5d4-4a5e-824a-9d7266970bff ~/.ssh/id_rsa
+0jwiDgNro3oTjf
+</pre>

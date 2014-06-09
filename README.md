@@ -100,6 +100,6 @@ vncviewer [IP]:1
 После завершения установки, виртуальная машина будет выключена, в папке появится образ [Имя установочного образа].qcow2
 
 <pre>
-glance image-create --is-public --progress --name win7-i386 --container-format bare --disk-format qcow2 --human-readable < X17-24280.iso.qcow2
+glance image-create --is-public True --progress --name win7-i386 --container-format bare --disk-format qcow2 --human-readable < X17-24280.iso.qcow2
 </pre>
 

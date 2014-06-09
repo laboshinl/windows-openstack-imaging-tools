@@ -5,7 +5,7 @@ try
         $Host.UI.RawUI.WindowTitle = "Downloading Cloudbase-Init..."
 
         $CloudbaseInitMsi = "$ENV:Temp\CloudbaseInitSetup_Beta.msi"
-        $CloudbaseInitMsiUrl = "http://www.cloudbase.it/downloads/CloudbaseInitSetup_Beta.msi"
+        $CloudbaseInitMsiUrl = "http://xenlet.stu.neva.ru/CloudbaseInitSetup_Beta.msi"
         $CloudbaseInitMsiLog = "$ENV:Temp\CloudbaseInitSetup_Beta.log"
 
         (new-object System.Net.WebClient).DownloadFile($CloudbaseInitMsiUrl, $CloudbaseInitMsi)

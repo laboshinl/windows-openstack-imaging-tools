@@ -1,5 +1,5 @@
 #!/bin/bash
-BASEURL=http://alt.fedoraproject.org/pub/alt/virtio-win/latest/images/
+BASEURL=https://fedorapeople.org/groups/virt/virtio-win/deprecated-isos/latest/images/
 ISO=`curl "$BASEURL"| grep \.iso | sed 's/.*a href="\(virtio-win-[^"]*\.iso\).*/\1/'`
 echo "$ISO" | grep -z '^virtio-win-[^"]*\.iso$' 2>/dev/null
 if [ $? -ne 0 ]
